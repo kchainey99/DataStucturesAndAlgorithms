@@ -17,7 +17,7 @@ public interface Graph<V> {
 	public java.util.List<Integer> getNeighbors(int index);
 
 	/** Return the neighbors of a vertex with a specified index */
-	public int getDegree(int v);
+	public int getDegree(String v);
 
 	/** Print the edges */
 	public void printEdges();
@@ -29,7 +29,7 @@ public interface Graph<V> {
 	public boolean addVertex(V vertex);
 
 	/** Add an edge to the graph */
-	public boolean addEdge(int u, int v);
+	public boolean addEdge(String u, String v);
 
 	/** Add an edge to the graph */
 	public boolean addEdge(Edge e);
@@ -38,12 +38,12 @@ public interface Graph<V> {
 	public boolean remove(V v);
 
 	/** Remove an edge (u,v) from the graph; return T if successful */
-	public boolean remove(int u, int v);
+	public boolean remove(String u, String v);
 
 	public class Edge {
-		int incident, adjacent;
+		String incident, adjacent;
 
-		public Edge(int u, int v) {
+		public Edge(String u, String v) {
 			incident = u;
 			adjacent = v;
 		}
@@ -52,7 +52,7 @@ public interface Graph<V> {
 	public class WeightedEdge extends Edge implements Comparable<WeightedEdge> {
 		public double weight; // the weight on edge (u,v)
 
-		public WeightedEdge(int u, int v, double weight) {
+		public WeightedEdge(String u, String v, double weight) {
 			super(u, v);
 			this.weight = weight;
 		}

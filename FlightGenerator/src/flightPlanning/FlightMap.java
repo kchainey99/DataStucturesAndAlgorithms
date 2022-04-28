@@ -2,57 +2,21 @@ package flightPlanning;
 
 import java.util.*;
 
-public class WeightedGraph<V> implements Graph<V>{
+//weighted, undirected G for storing flight data
+public class FlightMap<V> implements Graph<V>{
+
 	protected List<V> vertices = new ArrayList<>(); //store vertices
 	protected List<List<Edge>> neighbors = new ArrayList<>(); //adjacency edge lists
 	
-
-	
 	/**Construct an empty weighted graph*/
-	public WeightedGraph() {}
-	
-	/**Construct a Weighted Graph from vertices and edges in arrays*/
-	public WeightedGraph(V[] vertices, int[][] edges) {
-		createWeightedGraph(Arrays.asList(vertices),edges);
-	}
-	
-	/**Construct a WeightedGraph from vertices and edges in list*/
-	public WeightedGraph(int[][] edges, int numberOfVertices) {
-		List<V> vertices = new ArrayList<>();
-		for (int i =  0; i < numberOfVertices; i++)
-			vertices.add((V) (Integer.valueOf(i)));
-		createWeightedGraph(vertices, edges);
-	}
-
-	/**Construct a WeightedGraph for vertices 0,1,2 and edge list*/
-	public WeightedGraph(List<V> vertices, List<WeightedEdge> edges) {
-		createWeightedGraph(vertices, edges);
-	}
-	
-	/**Construct a WeightedGraph from vertices 0,1, and edge array*/
-	public WeightedGraph(List<WeightedEdge> edges, int numberOfVertices) {
-		List<V> vertices = new ArrayList<>();
-		for (int i = 0; i < numberOfVertices; i++)
-			vertices.add((V)(Integer.valueOf(i)));
-		createWeightedGraph(vertices, edges);
-	}
-	
-	/**Create AdjacencyLists from Edge Arrays*/
-	private void createWeightedGraph(List<V> vertices, int[][] edges) {
-		this.vertices = vertices;
-		for (int i = 0; i < vertices.size(); i++)
-			neighbors.add(new ArrayList<Edge>()); //createa a list for vertices
-		for (int i = 0; i < edges.length; i++)
-			neighbors.get(edges[i][0]).add(new WeightedEdge(edges[i][0], edges[i][1], edges[i][2]));
-	}
+	public FlightMap() {}
 	
 	/**Create adjacency lists from edge lists*/
-	private void createWeightedGraph(List<V> vertices, List<WeightedEdge> edges) {
-		this.vertices = vertices;
-		for (int i = 0; i < vertices.size(); i++)
-			neighbors.add(new ArrayList<Edge>());
-		for (WeightedEdge edge : edges)
-			neighbors.get(edge.incident).add(edge); //add an edge into list
+	void createFlightMap(HashMap<String, LinkedList<FlightManager.Flight>> data) {
+		data.forEach(null(key, value) ->
+		vertices.add(key);
+		
+		)
 	}
 	
 	/**Return the weight on the edge (u,v)*/
@@ -74,75 +38,8 @@ public class WeightedGraph<V> implements Graph<V>{
 	}
 	
 	/**Add edges to the weighted graph*/
-	public boolean addEdge(int u, int v, double weight) {
+	public boolean addEdge(String u, String v, double weight) {
 		return (addEdge(new WeightedEdge(u, v, weight)));
-	}
-	
-	/**Get a minimum spanning tree rooted at vertex 0*/
-	public MST getMinimumSpanningTree() {
-		return getMinimumSpanningTree(0);
-	}
-	
-	/**Get a minimum spanning tree rooted at a specified vertex*/
-	public MST getMinimumSpanningTree(int root) {
-		//cost[v] stores the cost by adding v to the tree
-		double[] cost = new double[getSize()];
-		for (int i = 0; i < cost.length; i++)
-			cost[i] = Double.POSITIVE_INFINITY; //initial cost
-		cost[root] = 0; //cost of source is 0
-		
-		int[] parent = new int[getSize()]; //parent of a vertex
-		parent[root] = -1;
-		double totalWeight = 0; //total weight of tree so far
-		List<Integer> T = new ArrayList<>();
-		
-		//Expand T
-		while (T.size() < getSize()) {
-			//find the smallest cost u in V-T
-			int u = -1; //vertex to be determined
-			double currentMinCost = Double.POSITIVE_INFINITY;
-			for (int i = 0; i < getSize(); i++)
-				if (!T.contains(i) && cost[i] < currentMinCost) {
-					currentMinCost = cost[i];
-					u = i;
-				}
-			
-			if (u == -1) break; else T.add(u); //add a new vertex to T
-			totalWeight += cost[u]; // add cost[u] to the tree
-			
-			//Adjust cost[v] for v that is adjacent to u and v in V-T
-			for (Edge e : neighbors.get(u))
-				if(!T.contains(e.adjacent) && cost[e.adjacent] > ((WeightedEdge)e).weight) {
-					cost[e.adjacent] = ((WeightedEdge)e).weight;
-					parent[e.adjacent] = u;
-				}
-		} //end of while
-		return new MST(root, parent, T, totalWeight);
-	}
-	
-	/**Prints MST from root vertex*/
-	public void PrintMinimumSpanningTree() {
-		System.out.println("MST from root vertex: ");
-		List<Integer> searchorder = getMinimumSpanningTree().getSearchOrder();
-		StringBuilder s = new StringBuilder();
-		for (Integer i : searchorder)
-			s.append(vertices.get(i) + " -> "); //converting integer values to names
-		s.setLength(s.length() - 4); //removing last arrow
-		System.out.println(s.toString());
-	}
-	
-	/**MST is an inner class in WeightedGraph*/
-	public class MST extends SearchTree{
-		private double totalWeight; //total weight of all edges in the tree
-
-		public MST(int root, int[] parent, List<Integer> searchOrder, double totalWeight) {
-			super(root, parent, searchOrder);
-			this.totalWeight = totalWeight;
-		}
-		
-		public double getTotalWeight() {
-			return totalWeight;
-		}
 	}
 	
 	/**Find single-source shortest paths -- Dijkstra's Algorithm.*/
@@ -270,6 +167,24 @@ public class WeightedGraph<V> implements Graph<V>{
 
 	@Override
 	public boolean remove(int u, int v) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public int getDegree(String v) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public boolean addEdge(String u, String v) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean remove(String u, String v) {
 		// TODO Auto-generated method stub
 		return false;
 	}
