@@ -1,66 +1,35 @@
 package flightPlanning;
 
-public interface Graph<V> {
+import java.util.ArrayList;
+import java.util.Stack;
+
+public interface Graph {
 	/** Return the number of vertices in the graph */
 	public int getSize();
 
-	/** Retun the number of vertices in the graph */
-	public java.util.List<V> getVertices();
-
-	/** Return the object for the specified vertex index */
-	public V getVertex(int index);
-
-	/** Return the index for the specified vertex object */
-	public int getIndex(V v);
-
-	/** Return the neighbors of a vertex with the specified index */
-	public java.util.List<Integer> getNeighbors(int index);
-
-	/** Return the neighbors of a vertex with a specified index */
-	public int getDegree(String v);
-
-	/** Print the edges */
-	public void printEdges();
+	/** Return the neighbors of a vertex */
+	public int getDegree(City city);
 
 	/** Clear the graph */
 	public void clear();
 
 	/** Add a vertex to the graph */
-	public boolean addVertex(V vertex);
+	public void addCity(City city);
 
-	/** Add an edge to the graph */
-	public boolean addEdge(String u, String v);
-
-	/** Add an edge to the graph */
-	public boolean addEdge(Edge e);
-
-	/** Remove a vertex v from the graph; return true if successful */
-	public boolean remove(V v);
+	/** Add a leg(flight) to the graph */
+	public void addLeg(City src, Flight flight);
+	
+	/** Add a leg(flight) to the graph */
+	public void removeLeg(City src, Flight flight);
 
 	/** Remove an edge (u,v) from the graph; return T if successful */
-	public boolean remove(String u, String v);
-
-	public class Edge {
-		String incident, adjacent;
-
-		public Edge(String u, String v) {
-			incident = u;
-			adjacent = v;
-		}
-	}
-
-	public class WeightedEdge extends Edge implements Comparable<WeightedEdge> {
-		public double weight; // the weight on edge (u,v)
-
-		public WeightedEdge(String u, String v, double weight) {
-			super(u, v);
-			this.weight = weight;
-		}
-
-		@Override
-		public int compareTo(WeightedEdge edge) {
-			return (weight > edge.weight) ? 1 : (weight == edge.weight) ? 0 : -1; // 1 if this > comparison, 0 if equal,
-																					// -1 if this < comparison
-		}
-	}
+	public void remove(City removal);
+	
+	/** return stack containing shortest path */
+	public Stack<City> getShortestPath(City src, City dest);
+	
+	/** Helper method for getNextShortestPath.
+	 * For a path with N cities, generate n-1 new graphs. Each graph has one edge from the original path removed.
+	 * @return ArrayList containing the new graphs*/
+	public ArrayList<Graph> removePath(Stack<City> path);
 }
