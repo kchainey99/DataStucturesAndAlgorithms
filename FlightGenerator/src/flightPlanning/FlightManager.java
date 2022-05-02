@@ -13,9 +13,9 @@ public final class FlightManager {
 	
 	//HashMap to store src V & adj E.
 	HashMap<City, LinkedList<Flight>> graph_data; //Key source,  Value = L.L. of flights from that source
-	LinkedList<String[]> requestedflights;
+	LinkedList<String[]> requestedFlights;
 	
-	HashMap<City, LinkedList<Flight>> readFlightData() throws FileNotFoundException{
+	private void readFlightData() throws FileNotFoundException{
 		Scanner s = new Scanner(flightdata);
 		int numoflines = s.nextInt(); // is this faster than checking if s.hasNextLine?
 		graph_data = new HashMap<City, LinkedList<Flight>>(numoflines); //give this HashMap an initial capacity to avoid unnecessary amortization
@@ -30,7 +30,6 @@ public final class FlightManager {
 			if (!graph_data.containsKey(source)) {
 			graph_data.put(source, new LinkedList<Flight>()); 
 				graph_data.get(source).add(flight);
-				
 			}
 			else
 				graph_data.get(source).add(flight); //if source is already there, then add to the adjacency list
@@ -48,22 +47,36 @@ public final class FlightManager {
 				graph_data.get(reciprocalSrc).add(returnLeg); //if source is already there, then add to the adjacency list
 		}
 		s.close();
-		return graph_data;
 	}
 	
-	LinkedList<String[]> getRequestedFlights() throws FileNotFoundException {
+	private void getRequestedFlights() throws FileNotFoundException {
 		Scanner s = new Scanner(requestedpaths);
 		int numoflines = s.nextInt();
-		requestedflights = new LinkedList<>(); // a little more readable in my opinion if LL is initialized here
+		requestedFlights = new LinkedList<>(); // a little more readable in my opinion if LL is initialized here
 		while (numoflines > 0) {
-			requestedflights.add(s.nextLine().split("|"));
+			requestedFlights.add(s.nextLine().split("|"));
 			numoflines--;
 		}
 		s.close();
-		return requestedflights;
 	}
 
-	void doYourThing() {
-		
+	LinkedList<FlightPath> getFirstKShortestPaths(City source, City dest, int k, char optimizingFor, FlightMap map){
+		ArrayList<FlightPath> allPaths = map.getAllPaths(source, dest, optimizingFor); //get all Paths from src -> dest
+		LinkedList<FlightPath> shortestPaths = new LinkedList<FlightPath>();
+		PriorityQueue<FlightPath> shortestPathQueue = new PriorityQueue<FlightPath>();
+		shortestPathQueue.addAll(allPaths);
+		while (k-- > 0)
+			shortestPaths.add(shortestPathQueue.poll()); // first k shortest paths result from popping from our min queue k times
+		return shortestPaths;
+	}
+	
+	void doYourThing(int howManyPaths) throws FileNotFoundException {
+		//read in data
+		readFlightData();
+		getRequestedFlights();
+		FlightMap map = new FlightMap(graph_data); //create graph
+		for (String[] request : requestedFlights) {
+			
+		}
 	}
 }

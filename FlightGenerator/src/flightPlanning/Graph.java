@@ -1,7 +1,6 @@
 package flightPlanning;
 
-import java.util.ArrayList;
-import java.util.Stack;
+import java.util.*;
 
 public interface Graph {
 	/** Return the number of vertices in the graph */
@@ -24,12 +23,9 @@ public interface Graph {
 
 	/** Remove an edge (u,v) from the graph; return T if successful */
 	public void remove(City removal);
+
+	/* return list containing all paths */
+	ArrayList<FlightPath> getAllPaths(City src, City dest, char optimizingFor);
 	
-	/** return stack containing shortest path */
-	public Stack<City> getShortestPath(City src, City dest);
 	
-	/** Helper method for getNextShortestPath.
-	 * For a path with N cities, generate n-1 new graphs. Each graph has one edge from the original path removed.
-	 * @return ArrayList containing the new graphs*/
-	public ArrayList<Graph> removePath(Stack<City> path);
 }

@@ -14,7 +14,7 @@ public class City{
 		isVisited = true;
 	}
 	
-	public Boolean compareTo(City other) {
+	public Boolean isEqual(City other) {
 		return this.name.contentEquals(other.name) ? true : false; 
 	}
 }

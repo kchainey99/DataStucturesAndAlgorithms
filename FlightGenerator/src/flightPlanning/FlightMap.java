@@ -3,7 +3,7 @@ package flightPlanning;
 import java.util.*;
 
 //weighted, undirected G for storing flight data
-public class FlightMap implements Graph{
+public final class FlightMap implements Graph{
 	protected HashMap<City, LinkedList<Flight>> flightPlan; //adjacency list
 	
 	/**Construct an empty weighted graph*/
@@ -86,29 +86,36 @@ public class FlightMap implements Graph{
 		removeLeg(flight.destination, new Flight(src, flight.cost, flight.time));		
 	}
 
-	
-	/**Finds shortest path based on time or cost*/
-	public Stack<City> getShortestPath(City src, City dest, char whattodo) {
+	@Override
+	public ArrayList<FlightPath> getAllPaths(City src, City dest, char optimizingFor) {
+		ArrayList<FlightPath> allPaths = new ArrayList<FlightPath>();
 		City current = src;
-		if (src.compareTo(dest)) {
-			System.err.println("Error: You are already at your destination. Please walk from here.");
-			return null;
-		}
-		//how to store total weight?
-		int path_cost; //stores total cost of path
-		Stack<City> path = new Stack<City>();
-		while (current != dest) {
-			path.push(current);
-			for (Flight f : flightPlan.get(current)) {
-				
-			}
-		}
+		Stack<Flight> path = new Stack<Flight>();
+		allPathsHelper(src, current, dest, path, allPaths, optimizingFor);
+			// also need to recurse through each adjacency list
 		return null;
-	}
+	}	
 	
-
-	public ArrayList<Graph> removePath(Stack<City> path) {
-		// TODO Auto-generated method stub
-		return null;
+	private void allPathsHelper(City src, City current, City dest, Stack<Flight> path, ArrayList<FlightPath> allPaths, char optimizingFor) {
+			for (Flight nextLeg : flightPlan.get(current)) {
+				path.push(nextLeg);
+				City next = nextLeg.destination;
+				// check to return to our last node if we run out of places to go
+				if (getDegree(next) == 1) { //if deg = 1 then we need to backtrack
+					path.pop(); //remove last flight from flightPath
+					if (path.isEmpty())
+						current = src;
+					else
+						current = path.peek().destination;
+					continue; //go to next Flight
+				}
+				else if (current.equals(dest)) { //we've found a valid flightPath
+					FlightPath flightPath = new FlightPath(src, path, optimizingFor);
+					allPaths.add(flightPath);
+					path.pop();
+					continue;
+				}
+				allPathsHelper(src, next, dest, path, allPaths, optimizingFor); // we finish when we've iterated through edge in the adj list
+			}
 	}
 }
