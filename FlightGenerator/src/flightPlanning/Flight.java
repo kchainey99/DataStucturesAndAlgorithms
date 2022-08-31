@@ -1,16 +1,10 @@
 package flightPlanning;
 
 public class Flight{ // flights = edges with city @ source
-	City destination; //only need destination, since source is our key
+	String destination; //only need destination, since source is our key
 	int cost, time;
 	Flight(String dest, int cost, int time){
-		destination = new City(dest);
-		this.cost = cost;
-		this.time = time;
-	}
-	
-	Flight(City dest, int cost, int time){
-		destination = dest;
+		destination = new String(dest);
 		this.cost = cost;
 		this.time = time;
 	}

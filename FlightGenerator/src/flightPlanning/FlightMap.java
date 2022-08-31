@@ -4,13 +4,13 @@ import java.util.*;
 
 //weighted, undirected G for storing flight data
 public final class FlightMap implements Graph{
-	protected HashMap<City, LinkedList<Flight>> flightPlan; //adjacency list
+	protected HashMap<String, LinkedList<Flight>> flightPlan; //adjacency list
 	
 	/**Construct an empty weighted graph*/
 	public FlightMap() {}
 	
 	/**Create adjacency lists from flight lists*/
-	FlightMap(HashMap<City, LinkedList<Flight>> data) {
+	FlightMap(HashMap<String, LinkedList<Flight>> data) {
 		flightPlan = data;
 	}
 
@@ -20,7 +20,7 @@ public final class FlightMap implements Graph{
 	}
 
 	@Override
-	public int getDegree(City city) {
+	public int getDegree(String city) {
 		return flightPlan.get(city).size();
 	}
 
@@ -30,7 +30,7 @@ public final class FlightMap implements Graph{
 	}
 
 	@Override
-	public void addCity(City city) {
+	public void addString(String city) {
 		if (!flightPlan.containsKey(city))
 			flightPlan.put(city, new LinkedList<Flight>());
 		else
@@ -38,7 +38,7 @@ public final class FlightMap implements Graph{
 	}
 
 	@Override
-	public void addLeg(City src, Flight flight) {
+	public void addLeg(String src, Flight flight) {
 		if (flightPlan.get(src).contains(flight)) {
 			System.err.println("Flight has already been added to the map.");
 			return;
@@ -63,7 +63,7 @@ public final class FlightMap implements Graph{
 	}
 
 	@Override
-	public void remove(City removal) {
+	public void remove(String removal) {
 		if (!flightPlan.containsKey(removal))
 			return;
 		
@@ -75,7 +75,7 @@ public final class FlightMap implements Graph{
 	}
 
 	@Override
-	public void removeLeg(City src, Flight flight) {
+	public void removeLeg(String src, Flight flight) {
 		if (!flightPlan.get(src).contains(flight))
 			return; // the leg either was never there or has already been removed. either way, return.
 		
@@ -85,37 +85,57 @@ public final class FlightMap implements Graph{
 		//remove return leg
 		removeLeg(flight.destination, new Flight(src, flight.cost, flight.time));		
 	}
-
-	@Override
-	public ArrayList<FlightPath> getAllPaths(City src, City dest, char optimizingFor) {
-		ArrayList<FlightPath> allPaths = new ArrayList<FlightPath>();
-		City current = src;
-		Stack<Flight> path = new Stack<Flight>();
-		allPathsHelper(src, current, dest, path, allPaths, optimizingFor);
-			// also need to recurse through each adjacency list
-		return null;
-	}	
 	
-	private void allPathsHelper(City src, City current, City dest, Stack<Flight> path, ArrayList<FlightPath> allPaths, char optimizingFor) {
-			for (Flight nextLeg : flightPlan.get(current)) {
-				path.push(nextLeg);
-				City next = nextLeg.destination;
-				// check to return to our last node if we run out of places to go
-				if (getDegree(next) == 1) { //if deg = 1 then we need to backtrack
-					path.pop(); //remove last flight from flightPath
-					if (path.isEmpty())
-						current = src;
-					else
-						current = path.peek().destination;
-					continue; //go to next Flight
-				}
-				else if (current.equals(dest)) { //we've found a valid flightPath
-					FlightPath flightPath = new FlightPath(src, path, optimizingFor);
-					allPaths.add(flightPath);
-					path.pop();
-					continue;
-				}
-				allPathsHelper(src, next, dest, path, allPaths, optimizingFor); // we finish when we've iterated through edge in the adj list
-			}
-	}
+    // Prints all paths from
+    // 's' to 'd'
+	@Override
+    public ArrayList<FlightPath> getAllPaths(String src, String dest, char optimizingFor) {
+        HashMap<String, Boolean> isVisited = new HashMap<String, Boolean>(flightPlan.keySet().size());
+        Stack<Flight> pathList = new Stack<Flight>(); //stores edges that form path
+        ArrayList<FlightPath> allPaths = new ArrayList<FlightPath>(); //stores all paths & their associated cost & time weights
+        for (String city : flightPlan.keySet())
+        	isVisited.put(city, false); //initializing boolean HM to False
+        // Call recursive utility
+        printAllPathsUtil(src, src, dest, isVisited, allPaths, pathList, optimizingFor);
+        
+        return allPaths;
+    }
+ 
+    // A recursive function to print
+    // all paths from 'u' to 'd'.
+    // isVisited[] keeps track of
+    // vertices in current path.
+    // localPathList<> stores the flights that make up the path
+    private void printAllPathsUtil(String src, String current, String dest, HashMap<String, Boolean> isVisited,
+    							ArrayList<FlightPath> allPaths, Stack<Flight> thisPath, char optimizingFor) {
+    	
+    	// if match found then no need to traverse more till depth
+        if (current.equals(dest)) {
+        	allPaths.add(new FlightPath(src, thisPath, optimizingFor));
+            if (!thisPath.isEmpty())
+            	thisPath.pop();
+            return;
+        }
+ 
+        // Mark the current node
+        isVisited.put(current, true);
+ 
+        // Recur for all the vertices
+        // adjacent to current vertex
+        for (Flight f : flightPlan.get(current)) {
+        	if (!isVisited.get(f.destination).booleanValue()) {
+                // store current flight in path
+            	thisPath.push(f);
+                printAllPathsUtil(src, f.destination, dest, isVisited, allPaths, thisPath, optimizingFor);
+ 
+                // remove current node
+                // in path[]
+                if(!thisPath.isEmpty())
+                	thisPath.pop();
+            }
+        }
+ 
+        // Mark the current node
+        isVisited.put(current, false);
+    }
 }

@@ -7,25 +7,25 @@ public interface Graph {
 	public int getSize();
 
 	/** Return the neighbors of a vertex */
-	public int getDegree(City city);
+	public int getDegree(String city);
 
 	/** Clear the graph */
 	public void clear();
 
 	/** Add a vertex to the graph */
-	public void addCity(City city);
+	public void addString(String city);
 
 	/** Add a leg(flight) to the graph */
-	public void addLeg(City src, Flight flight);
+	public void addLeg(String src, Flight flight);
 	
 	/** Add a leg(flight) to the graph */
-	public void removeLeg(City src, Flight flight);
+	public void removeLeg(String src, Flight flight);
 
 	/** Remove an edge (u,v) from the graph; return T if successful */
-	public void remove(City removal);
+	public void remove(String removal);
 
 	/* return list containing all paths */
-	ArrayList<FlightPath> getAllPaths(City src, City dest, char optimizingFor);
+	ArrayList<FlightPath> getAllPaths(String src, String dest, char optimizingFor);
 	
 	
 }

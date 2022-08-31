@@ -14,7 +14,17 @@ public class City{
 		isVisited = true;
 	}
 	
-	public Boolean isEqual(City other) {
-		return this.name.contentEquals(other.name) ? true : false; 
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof City){
+			City c = (City)o;
+			return equals(c);
+		}
+		else
+			return false;
+	}
+	
+	public Boolean equals(City other) {
+		return this.name.equals(other.name) ? true : false; 
 	}
 }
